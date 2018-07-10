@@ -327,14 +327,14 @@ handle_cast(trade_resources, State) ->
     rd_store:delete_deleted_resource_tuple(),
     {noreply, State};
 handle_cast({trade_resources, {ReplyTo, {Remotes, RemoteDeletedTuples}}}, State) ->
-    error_logger:info_msg("trade_resources, got remotes ~p: deleted: ~p", [Remotes, RemoteDeletedTuples]),
+%%    error_logger:info_msg("trade_resources, got remotes ~p: deleted: ~p", [Remotes, RemoteDeletedTuples]),
     Locals = rd_store:get_local_resource_tuples(),
     LocalsDeleted = rd_store:get_deleted_resource_tuples(),
     TargetTypes = rd_store:get_target_resource_types(),
     FilteredRemotes = filter_resource_tuples_by_types(TargetTypes, Remotes),
-    error_logger:info_msg("got remotes and filtered ~p", [FilteredRemotes]),
+%%    error_logger:info_msg("got remotes and filtered ~p", [FilteredRemotes]),
     rd_store:store_resource_tuples(FilteredRemotes),
-    error_logger:info_msg("trade_resources, deleting ~p", [RemoteDeletedTuples]),
+%%    error_logger:info_msg("trade_resources, deleting ~p", [RemoteDeletedTuples]),
     [rd_store:delete_resource_tuple(DR) || DR <- RemoteDeletedTuples],
     make_callbacks(FilteredRemotes),
     reply(ReplyTo, {Locals, LocalsDeleted}),

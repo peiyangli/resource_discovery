@@ -61,20 +61,31 @@ init([]) ->
     MaxTimeBetRestarts = 3600,
     SupFlags = {RestartStrategy, MaxRestarts, MaxTimeBetRestarts},
 
+  RdCore = {rd_core,
+    {rd_core, start_link, []},
+    permanent,
+    1000,
+    worker,
+    [rd_core]},
+  RdEvent = {rd_event, {rd_event, start_link, []},
+    permanent, 2000, worker, [rd_event]},
+
+%%  Rd_heartbeat = {rd_heartbeat,
+%%    {rd_heartbeat, start_link, []},
+%%    transient,
+%%    brutal_kill,
+%%    worker,
+%%    [rd_heartbeat]},
+
+  Rd_node_monitor = {rd_node_monitor, {rd_node_monitor, start_link, []},
+  permanent, 2000, worker, [rd_node_monitor]},
+
     ChildSpecs = 
-        [ 
-          {rd_core,
-           {rd_core, start_link, []},
-           permanent,
-           1000,
-           worker,
-           [rd_core]}
-          ,{rd_heartbeat,
-          {rd_heartbeat, start_link, []},
-          transient,
-          brutal_kill,
-          worker,
-          [rd_heartbeat]}
+        [
+          RdCore
+%%          ,Rd_heartbeat
+          ,RdEvent
+          ,Rd_node_monitor
          ],
 
     {ok, {SupFlags, ChildSpecs}}.

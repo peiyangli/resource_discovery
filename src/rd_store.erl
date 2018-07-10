@@ -226,8 +226,32 @@ get_resources(Type) ->
 %%-----------------------------------------------------------------------
 -spec store_resource_tuple(resource_tuple()) -> ok.
 store_resource_tuple({Type, Resource}) when is_atom(Type) ->
-    ets:insert(?RS, {Type, lists:usort(get_resources(Type) ++ [Resource])}),
-    ok.
+  OldRes = get_resources(Type),
+  NewRes = lists:usort(OldRes ++ [Resource]),
+  ets:insert(?RS, {Type, NewRes}),
+
+  % res changed notify
+  case list_is_same(OldRes, NewRes) of
+    true->
+      ok;
+    _ ->
+      rd_event:resource_changed({Type, NewRes})
+  end,
+  ok.
+
+
+list_is_same([], [])->
+    true;
+list_is_same([A|TA], [B|TB])->
+  case A=:=B of
+    true->
+      list_is_same(TA, TB);
+    _ ->
+      false
+  end;
+list_is_same(_, _)->
+  false.
+
 
 -spec store_resource_tuples([resource_tuple()]) -> ok.
 store_resource_tuples([]) -> ok;
