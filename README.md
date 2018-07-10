@@ -1,2 +1,9 @@
-# resource_discovery
-from git@github.com:erlware/resource_discovery.git
+resource_discovery
+=====
+
+An OTP application
+
+Build
+-----
+
+    $ rebar3 compile
